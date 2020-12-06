@@ -3,14 +3,15 @@ import System.IO
 main = do
     allLines <- getLines
     let lineLength = length $ head allLines
-    let count = countTrees allLines 0 lineLength
-    putStr $ show count
+    let counts = map (uncurry $ countTrees allLines 0 lineLength) [(1, 1), (3,1), (5, 1), (7, 1), (1, 2)]
+    putStr $ "Number of trees encountered per slope: " ++ show counts
+    putStr $ "Multiplying all of those gives: " ++ show (product counts)
 
-countTrees :: [String] -> Int -> Int -> Int
-countTrees [] _ _ = 0
-countTrees lines index lineLength =
+countTrees :: [String] -> Int -> Int -> Int -> Int -> Int
+countTrees [] _ _ _ _ = 0
+countTrees lines index lineLength deltaX deltaY =
     let treeOrNoTree = countTree $ head lines !! index
-    in treeOrNoTree + countTrees (tail lines) ((index + 3) `mod` lineLength) lineLength
+    in treeOrNoTree + countTrees (drop deltaY lines) ((index + deltaX) `mod` lineLength) lineLength deltaX deltaY
 
 countTree :: Char -> Int
 countTree '#' = 1
