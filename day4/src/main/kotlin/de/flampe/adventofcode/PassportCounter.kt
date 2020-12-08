@@ -7,7 +7,7 @@ val REQUIRED_FIELDS = listOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid")
 fun main(args: Array<String>) {
     val passports = mutableListOf<String>()
     passports.add("")
-    val lines = File("input").forEachLine {
+    File("input").forEachLine {
         if (it.isBlank() && passports.last().isNotBlank()) {
             passports.add("")
         } else {
@@ -15,22 +15,12 @@ fun main(args: Array<String>) {
             passports.add(passportInfo.trim())
         }
     }
-
-    var validPassports = 0
-    for (passport in passports) {
-        if (passport.isValid()) {
-            validPassports++
-        }
-    }
-
     println(passports)
+
+    val validPassports = passports.count { passport -> passport.isValid() }
     println(validPassports)
 }
 
 private fun String.isValid(): Boolean {
-    var containsAllFields = true
-    for (field in REQUIRED_FIELDS) {
-        containsAllFields = containsAllFields.and(this.contains(field))
-    }
-    return containsAllFields
+    return REQUIRED_FIELDS.all { field -> this.contains(field) }
 }
